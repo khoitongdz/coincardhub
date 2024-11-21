@@ -9,7 +9,7 @@ endlocal allScripts = game.Workspace:GetDescendants()
 for _, s in pairs(allScripts) do
     if s:IsA("Script") or s:IsA("LocalScript") then
         if s.Name == "Skibidi Hub" then
-            print("Script AutoFarm đã tồn tại!")
+            print("Skibidi Hub đã tồnn tại!")
         end
     end
 end
