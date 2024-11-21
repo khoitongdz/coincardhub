@@ -1,4 +1,3 @@
--- This file was protected using Luraph Obfuscator v14.2 [https://lura.ph/]
 script.Name = "Skibidi Hub"
 if script.Name == "Skibidi Hubt" then
     print("Script đã được đặt tên đúng!")
