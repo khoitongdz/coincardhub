@@ -19,15 +19,15 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.Name = "KenonHub"
 
--- Main Menu Frame (Initially hidden but will be shown automatically)
+-- Main Menu Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 400, 0, 500)
 mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
 mainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 mainFrame.Parent = ScreenGui
-mainFrame.Visible = true -- Automatically show the menu when the script is executed
+mainFrame.Visible = true
 
--- Title Label
+-- Title and Owner Labels
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(0, 400, 0, 50)
 titleLabel.Text = "Kenon Hub"
@@ -36,7 +36,6 @@ titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Parent = mainFrame
 
--- Display Owner
 local ownerLabel = Instance.new("TextLabel")
 ownerLabel.Size = UDim2.new(0, 400, 0, 30)
 ownerLabel.Text = "Owner: khoitongdz"
@@ -179,4 +178,7 @@ disableHakiButton.MouseButton1Click:Connect(function()
 end)
 
 -- Toggle Menu Visibility
-toggleButton.MouseButton1
+toggleButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+    toggleButton.Text = mainFrame.Visible and "Close Menu" or "Open Menu"
+end)
