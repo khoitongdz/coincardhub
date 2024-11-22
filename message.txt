@@ -1,140 +1,20 @@
---[[
-    This script has been licensed using Luarmor
-      Luarmor v3.8b, Lua whitelisting system
-            https://luarmor.net/
+-- Global Settings
+getgenv().AutoFarm = true -- Enable Auto Farm
+getgenv().FastAttack = true -- Enable Fast Attack
+getgenv().FixCrash = false -- Optimize performance when changing servers
+getgenv().FixCrash2 = false -- Reduce lag but disable some features
 
-      _____                  _     _ _        __     ______  
-     |_   _| __ _   _  ___  | |   (_) |_ ___  \ \   / /___ \ 
-       | || '__| | | |/ _ \ | |   | | __/ _ \  \ \ / /  __) |
-       | || |  | |_| |  __/ | |___| | ||  __/   \ V /  / __/ 
-       |_||_|   \__,_|\___| |_____|_|\__\___|    \_/  |_____|
-                                                             
+-- Rename script to Kenon Hub
+getgenv().ScriptName = "Kenon Hub" -- Script by khoitongdz, unlocking all premium features
 
-    Script Name: Kenon Hub
-    Creator: khoitongdz
-]]
+-- Optimized script loader
+local url = "https://api.luarmor.net/files/v3/loaders/3b2169cf53bc6104dabe8e19562e5cc2.lua"
 
--- Logo and loading screen customization
-getgenv().DisplayLogo = true  -- Set to true to show the logo, false to hide it
-getgenv().LogoText = "Kenon Loading..."  -- Custom loading text
-getgenv().LogoLink = "https://cdn.discordapp.com/attachments/1305080398400983100/1308677136789278801/th_1.png?ex=6741730f&is=6740218f&hm=612606234a430c812a8e9da3b08024cdeda7e446a8ee193cf035f7bd11a51b9f"  -- URL link for logo click (can be updated)
-getgenv().LogoImageUrl = "https://cdn.discordapp.com/attachments/1305080398400983100/1308677136789278801/th_1.png?ex=6741730f&is=6740218f&hm=612606234a430c812a8e9da3b08024cdeda7e446a8ee193cf035f7bd11a51b9f"  -- Custom logo image URL
-
--- Display Custom Logo if enabled
-if getgenv().DisplayLogo then
-    local logo = Instance.new("ScreenGui")
-    logo.Name = "KenonLogo"
-    logo.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-    -- Image Logo
-    local imageLabel = Instance.new("ImageLabel")  -- Corrected this line
-    imageLabel.Size = UDim2.new(0, 200, 0, 200)  -- Set the size of the logo image
-    imageLabel.Position = UDim2.new(0.5, -100, 0.1, 0)  -- Center the image
-    imageLabel.Image = getgenv().LogoImageUrl  -- Set the logo image URL
-    imageLabel.BackgroundTransparency = 1
-    imageLabel.Parent = logo
-
-    -- Text for Loading State
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Size = UDim2.new(0, 400, 0, 100)
-    textLabel.Position = UDim2.new(0.5, -200, 0.4, 0)
-    textLabel.Text = getgenv().LogoText
-    textLabel.TextSize = 36
-    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textLabel.BackgroundTransparency = 1
-    textLabel.TextStrokeTransparency = 0.8
-    textLabel.Parent = logo
-
-    -- Making the logo clickable and opening the URL
-    imageLabel.MouseButton1Click:Connect(function()
-        game:GetService("GuiService"):OpenBrowserWindow(getgenv().LogoLink)
-    end)
-end
-
--- License and loader setup
-local a = "This file is licensed with Luarmor. You must use the actual loadstring to execute this script. Do not run this file directly. Always use the loadstring."
-local b = "3b2169cf53bc6104dabe8e19562e5cc2"
-
-if lrm_load_script then 
-    lrm_load_script(b)
-    while wait(1) do end
-end
-
-local c = "https://api.luarmor.net/files/v3/l/" .. b .. ".lua"
-is_from_loader = {Mode = "fastload"}
-
-local d = 0.03
-local timeout = 10  -- Set timeout to 10 seconds
-local startTime = tick()
-
-l_fastload_enabled = function(e)
-    if e == "flush" then
-        wait(d)
-        d = d + 2
-        local f, g
-        local h, i = pcall(function()
-            g = game:HttpGet(c)
-            pcall(writefile, b .. "-cache.lua", "-- " .. a .. "\n\n if not is_from_loader then warn('Use the loadstring, do not run this directly') return end;\n "..g)
-            wait(0.1)
-            f = loadstring(g)
-        end)
-        if not h or not f then
-            pcall(writefile, "lrm-err-loader-log-httpresp.txt", tostring(g))
-            warn("Error while executing loader. Err:" .. tostring(i) .. " See lrm-err-loader-log-httpresp.txt in your workspace.")
-            return
-        end
-        f(is_from_loader)
-    end
-    if e == "rl" then
-        pcall(writefile, b .. "-cache.lua", "recache required")
-        wait(0.2)
-        pcall(delfile, b .. "-cache.lua")
-    end
-end
-
-local j
-local k, l = pcall(function()
-    j = readfile(b .. "-cache.lua")
-    if (not j) or (#j < 5) then
-        j = nil
-        return
-    end
-    j = loadstring(j)
+-- Begin loading script quickly
+local success, result = pcall(function() 
+    loadstring(game:HttpGet(url))() 
 end)
 
-if not k or not j then
-    l_fastload_enabled("flush")
-    return
-end
-
-j(is_from_loader)
-
--- Timer to stop loading after 10 seconds
-if tick() - startTime > timeout then
-    warn("Script took too long to load! Stopping the script.")
-    return  -- Exit the script after 10 seconds
-end
-
--- Free Kill Player Feature (Trial)
-getgenv().KillPlayerTrial = true  -- Free trial for killing players
-
--- Unlock All Premium Features for Free
-getgenv().UnlockPremiumFeatures = true  -- Unlocks all premium features
-
--- Kill Player Logic
-if getgenv().KillPlayerTrial then
-    game.Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function(character)
-            -- Example of killing the player (you can customize this action)
-            wait(1)  -- Delay to ensure the character is fully loaded
-            player.Character:BreakJoints()  -- This kills the player
-        end)
-    end)
-end
-
--- Unlock premium features
-if getgenv().UnlockPremiumFeatures then
-    -- Unlock premium content here
-    -- Example: Grant extra tools, abilities, etc.
-    print("All premium features are unlocked for free!")
+if not success then
+    warn("Failed to load the script:", result)
 end
