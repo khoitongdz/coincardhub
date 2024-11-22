@@ -1,215 +1,140 @@
-script.Name = "Skibidi Hub"
-if script.Name == "Skibidi Hubt" then
-    print("Script đã được đặt tên đúng!")
-else
-    print("Script đang sử dụng tên sai!")
-endlocal allScripts = game.Workspace:GetDescendants()
+--[[
+    This script has been licensed using Luarmor
+      Luarmor v3.8b, Lua whitelisting system
+            https://luarmor.net/
 
-for _, s in pairs(allScripts) do
-    if s:IsA("Script") or s:IsA("LocalScript") then
-        if s.Name == "Skibidi Hub" then
-            print("Skibidi Hub đã tồnn tại!")
+      _____                  _     _ _        __     ______  
+     |_   _| __ _   _  ___  | |   (_) |_ ___  \ \   / /___ \ 
+       | || '__| | | |/ _ \ | |   | | __/ _ \  \ \ / /  __) |
+       | || |  | |_| |  __/ | |___| | ||  __/   \ V /  / __/ 
+       |_||_|   \__,_|\___| |_____|_|\__\___|    \_/  |_____|
+                                                             
+
+    Script Name: Kenon Hub
+    Creator: khoitongdz
+]]
+
+-- Logo and loading screen customization
+getgenv().DisplayLogo = true  -- Set to true to show the logo, false to hide it
+getgenv().LogoText = "Kenon Loading..."  -- Custom loading text
+getgenv().LogoLink = "https://cdn.discordapp.com/attachments/1305080398400983100/1308677136789278801/th_1.png?ex=6741730f&is=6740218f&hm=612606234a430c812a8e9da3b08024cdeda7e446a8ee193cf035f7bd11a51b9f"  -- URL link for logo click (can be updated)
+getgenv().LogoImageUrl = "https://cdn.discordapp.com/attachments/1305080398400983100/1308677136789278801/th_1.png?ex=6741730f&is=6740218f&hm=612606234a430c812a8e9da3b08024cdeda7e446a8ee193cf035f7bd11a51b9f"  -- Custom logo image URL
+
+-- Display Custom Logo if enabled
+if getgenv().DisplayLogo then
+    local logo = Instance.new("ScreenGui")
+    logo.Name = "KenonLogo"
+    logo.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+    -- Image Logo
+    local imageLabel = Instance.new("ImageLabel")  -- Corrected this line
+    imageLabel.Size = UDim2.new(0, 200, 0, 200)  -- Set the size of the logo image
+    imageLabel.Position = UDim2.new(0.5, -100, 0.1, 0)  -- Center the image
+    imageLabel.Image = getgenv().LogoImageUrl  -- Set the logo image URL
+    imageLabel.BackgroundTransparency = 1
+    imageLabel.Parent = logo
+
+    -- Text for Loading State
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(0, 400, 0, 100)
+    textLabel.Position = UDim2.new(0.5, -200, 0.4, 0)
+    textLabel.Text = getgenv().LogoText
+    textLabel.TextSize = 36
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextStrokeTransparency = 0.8
+    textLabel.Parent = logo
+
+    -- Making the logo clickable and opening the URL
+    imageLabel.MouseButton1Click:Connect(function()
+        game:GetService("GuiService"):OpenBrowserWindow(getgenv().LogoLink)
+    end)
+end
+
+-- License and loader setup
+local a = "This file is licensed with Luarmor. You must use the actual loadstring to execute this script. Do not run this file directly. Always use the loadstring."
+local b = "3b2169cf53bc6104dabe8e19562e5cc2"
+
+if lrm_load_script then 
+    lrm_load_script(b)
+    while wait(1) do end
+end
+
+local c = "https://api.luarmor.net/files/v3/l/" .. b .. ".lua"
+is_from_loader = {Mode = "fastload"}
+
+local d = 0.03
+local timeout = 10  -- Set timeout to 10 seconds
+local startTime = tick()
+
+l_fastload_enabled = function(e)
+    if e == "flush" then
+        wait(d)
+        d = d + 2
+        local f, g
+        local h, i = pcall(function()
+            g = game:HttpGet(c)
+            pcall(writefile, b .. "-cache.lua", "-- " .. a .. "\n\n if not is_from_loader then warn('Use the loadstring, do not run this directly') return end;\n "..g)
+            wait(0.1)
+            f = loadstring(g)
+        end)
+        if not h or not f then
+            pcall(writefile, "lrm-err-loader-log-httpresp.txt", tostring(g))
+            warn("Error while executing loader. Err:" .. tostring(i) .. " See lrm-err-loader-log-httpresp.txt in your workspace.")
+            return
         end
+        f(is_from_loader)
+    end
+    if e == "rl" then
+        pcall(writefile, b .. "-cache.lua", "recache required")
+        wait(0.2)
+        pcall(delfile, b .. "-cache.lua")
     end
 end
--- Tìm người chơi
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
 
--- Kiểm tra sự tồn tại của nhân vật
-if not character then
-    warn("Không tìm thấy nhân vật!")
-    return
-end
-
--- Xác định các thành phần quan trọng
-local humanoid = character:FindFirstChildOfClass("Humanoid")
-local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-
-if not humanoid or not humanoidRootPart then
-    warn("Nhân vật không đầy đủ hoặc bị lỗi!")
-    return
-end
--- Tạo GUI cơ bản
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local Button1 = Instance.new("TextButton")
-local Button2 = Instance.new("TextButton")
-
--- Gắn GUI vào người chơi
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
--- Thuộc tính của menu chính
-ScreenGui.Name = "MyScriptMenu"
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.Size = UDim2.new(0, 300, 0, 400)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -200)
-
--- Tiêu đề menu
-Title.Parent = Frame
-Title.Text = "Blox Fruits Menu"
-Title.Size = UDim2.new(1, 0, 0, 50)
-Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 24
-
--- Nút 1: Kích hoạt farm tự động
-Button1.Parent = Frame
-Button1.Text = "Auto Farm"
-Button1.Size = UDim2.new(0.8, 0, 0, 50)
-Button1.Position = UDim2.new(0.1, 0, 0.3, 0)
-Button1.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button1.Font = Enum.Font.SourceSansBold
-Button1.TextSize = 20
-
--- Nút 2: Kích hoạt Fast Attack
-Button2.Parent = Frame
-Button2.Text = "Fast Attack"
-Button2.Size = UDim2.new(0.8, 0, 0, 50)
-Button2.Position = UDim2.new(0.1, 0, 0.5, 0)
-Button2.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-Button2.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button2.Font = Enum.Font.SourceSansBold
-Button2.TextSize = 20
--- In ra thông báo xác nhận
-print("Script bắt đầu! Nhân vật của bạn:", player.Name)
-
--- Các biến toàn cục để dùng cho các chức năng
-local enemies = workspace:FindFirstChild("Enemies") -- Đảm bảo thư mục quái tồn tại
-if not enemies then
-    warn("Không tìm thấy thư mục quái trong workspace!")
-end
-
--- Hàm tiện ích: tìm kiếm quái gần nhất
-local function getNearestEnemy()
-    local nearestEnemy = nil
-    local shortestDistance = math.huge
-local CloseButton = Instance.new("TextButton")
-CloseButton.Parent = Frame
-CloseButton.Text = "X"
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.SourceSansBold
-CloseButton.TextSize = 16
-
-CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui.Enabled = false -- Ẩn menu
+local j
+local k, l = pcall(function()
+    j = readfile(b .. "-cache.lua")
+    if (not j) or (#j < 5) then
+        j = nil
+        return
+    end
+    j = loadstring(j)
 end)
-local Slider = Instance.new("Frame")
-Slider.Parent = Frame
-Slider.Size = UDim2.new(0.8, 0, 0, 20)
-Slider.Position = UDim2.new(0.1, 0, 0.7, 0)
-Slider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 
-local Handle = Instance.new("Frame")
-Handle.Parent = Slider
-Handle.Size = UDim2.new(0, 20, 1, 0)
-Handle.Position = UDim2.new(0, 0, 0, 0)
-Handle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-    for _, enemy in pairs(enemies:GetChildren()) do
-        if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
-            local distance = (enemy.PrimaryPart.Position - humanoidRootPart.Position).magnitude
-            if distance < shortestDistance then
-                shortestDistance = distance
-                nearestEnemy = enemy
-            end
-        end
-    end
-
-    return nearestEnemy
+if not k or not j then
+    l_fastload_enabled("flush")
+    return
 end
 
--- Hàm kiểm tra trạng thái của nhân vật
-local function checkCharacterStatus()
-    if humanoid.Health <= 0 then
-        warn("Nhân vật đã chết! Script sẽ tạm dừng.")
-        return false
-    end
-    return true
+j(is_from_loader)
+
+-- Timer to stop loading after 10 seconds
+if tick() - startTime > timeout then
+    warn("Script took too long to load! Stopping the script.")
+    return  -- Exit the script after 10 seconds
 end
 
--- Chạy thử một hàm để kiểm tra quái gần nhất
-local nearestEnemy = getNearestEnemy()
-if nearestEnemy then
-    print("Quái gần nhất:", nearestEnemy.Name)
-else
-    print("Không tìm thấy quái nào gần!")
-end
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+-- Free Kill Player Feature (Trial)
+getgenv().KillPlayerTrial = true  -- Free trial for killing players
 
-local function fastAttack()
-    local tool = character:FindFirstChildOfClass("mele") -- Lấy vũ khí hiện tại
-    if tool then
-        while true do
-            tool:Activate() -- Kích hoạt đòn đánh
-            wait(0.1) -- Thời gian giữa các lần đánh (giảm xuống để đánh nhanh hơn)
-        end
-    else
-        print("Không tìm thấy vũ khí!")
-    end
+-- Unlock All Premium Features for Free
+getgenv().UnlockPremiumFeatures = true  -- Unlocks all premium features
+
+-- Kill Player Logic
+if getgenv().KillPlayerTrial then
+    game.Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function(character)
+            -- Example of killing the player (you can customize this action)
+            wait(1)  -- Delay to ensure the character is fully loaded
+            player.Character:BreakJoints()  -- This kills the player
+        end)
+    end)
 end
 
--- Kích hoạt fast attack
-fastAttack(1.15)
--- Tìm kiếm quái gần nhất
-local function getNearestEnemy()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local enemies = workspace.Enemies:GetChildren() -- Đảm bảo quái ở đảo "cake island"
-    local nearestEnemy = nil
-    local shortestDistance = math.huge -- Giá trị lớn vô cực
-
-    for _, enemy in pairs(enemies) do
-        if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
-            local distance = (enemy.PrimaryPart.Position - character.PrimaryPart.Position).magnitude
-            if distance < shortestDistance then
-                shortestDistance = distance
-                nearestEnemy = enemy
-            end
-        end
-    end
-
-    return nearestEnemy
-end
-local TweenService = game:GetService("TweenService")
-
-local function moveToTarget(target)
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local tween = TweenService:Create(
-        humanoidRootPart,
-        TweenInfo.new(.02), -- Thời gian di chuyển
-        { CFrame = target.PrimaryPart.CFrame }
-    )
-    tween:Play()
-    tween.Completed:Wait()
-end
-local function attackEnemy(enemy)
-    local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
-    if tool then
-        tool:Activate() -- Kích hoạt vũ khí
-        wait(1) -- Đợi 1 giây giữa các lần tấn công
-    end
-end
-while true do
-    local enemy = getNearestEnemy()
-    if enemy then
-        moveToTarget(enemy)
-        while enemy.Humanoid.Health > 0 do
-            attackEnemy(enemy)
-            wait(0.5) -- Khoảng thời gian giữa các lần tấn công
-        end
-    else
-        print("Không tìm thấy quái. Đợi quái mới xuất hiện...")
-        wait(5) -- Đợi 5 giây trước khi tìm kiếm lại
-    end
+-- Unlock premium features
+if getgenv().UnlockPremiumFeatures then
+    -- Unlock premium content here
+    -- Example: Grant extra tools, abilities, etc.
+    print("All premium features are unlocked for free!")
 end
