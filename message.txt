@@ -1,20 +1,176 @@
--- Global Settings
-getgenv().AutoFarm = true -- Enable Auto Farm
-getgenv().FastAttack = true -- Enable Fast Attack
-getgenv().FixCrash = false -- Optimize performance when changing servers
-getgenv().FixCrash2 = false -- Reduce lag but disable some features
+-- Kenon Hub Script
 
--- Rename script to Kenon Hub
-getgenv().ScriptName = "Kenon Hub" -- Script by khoitongdz, unlocking all premium features
+-- Display Script Name and Logo in Output
+print([[
+██╗  ██╗███████╗ █████╗ ███╗   ██╗
+██║  ██║██╔════╝██╔══██╗████╗  ██║
+███████║█████╗  ███████║██╔██╗ ██║
+██╔══██║██╔══╝  ██╔══██║██║╚██╗██║
+██║  ██║███████╗██║  ██║██║ ╚████║
+╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝
+]])
 
--- Optimized script loader
-local url = "https://api.luarmor.net/files/v3/loaders/3b2169cf53bc6104dabe8e19562e5cc2.lua"
+print("🔥 Kenon Hub - Auto Farm, Level Farming, Quest Acceptance & Fast Attack Script 🔥")
 
--- Begin loading script quickly
-local success, result = pcall(function() 
-    loadstring(game:HttpGet(url))() 
-end)
+-- Create GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "KenonHub"
 
-if not success then
-    warn("Failed to load the script:", result)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 500, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.Parent = ScreenGui
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(0, 500, 0, 50)
+titleLabel.Text = "Kenon Hub"
+titleLabel.TextSize = 24
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Parent = mainFrame
+
+-- Tabs
+local tabButtonFrame = Instance.new("Frame")
+tabButtonFrame.Size = UDim2.new(0, 500, 0, 50)
+tabButtonFrame.Position = UDim2.new(0, 0, 0, 50)
+tabButtonFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+tabButtonFrame.Parent = mainFrame
+
+local autoFarmTab = Instance.new("TextButton")
+autoFarmTab.Size = UDim2.new(0, 250, 0, 50)
+autoFarmTab.Text = "Auto Farm"
+autoFarmTab.TextSize = 18
+autoFarmTab.BackgroundColor3 = Color3.fromRGB(0, 128, 0)
+autoFarmTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+autoFarmTab.Parent = tabButtonFrame
+
+local attackTab = Instance.new("TextButton")
+attackTab.Size = UDim2.new(0, 250, 0, 50)
+attackTab.Position = UDim2.new(0.5, 0, 0, 0)
+attackTab.Text = "Fast Attack"
+attackTab.TextSize = 18
+attackTab.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+attackTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+attackTab.Parent = tabButtonFrame
+
+-- Toggle Buttons for Features
+local startAutoFarm = Instance.new("TextButton")
+startAutoFarm.Size = UDim2.new(0, 200, 0, 50)
+startAutoFarm.Position = UDim2.new(0, 0, 0, 100)
+startAutoFarm.Text = "Start Auto Farm"
+startAutoFarm.TextSize = 18
+startAutoFarm.BackgroundColor3 = Color3.fromRGB(0, 128, 0)
+startAutoFarm.TextColor3 = Color3.fromRGB(255, 255, 255)
+startAutoFarm.Parent = mainFrame
+
+local stopAutoFarm = Instance.new("TextButton")
+stopAutoFarm.Size = UDim2.new(0, 200, 0, 50)
+stopAutoFarm.Position = UDim2.new(0, 0, 0, 160)
+stopAutoFarm.Text = "Stop Auto Farm"
+stopAutoFarm.TextSize = 18
+stopAutoFarm.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+stopAutoFarm.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopAutoFarm.Parent = mainFrame
+
+-- XP & Level Farming Display
+local xpLabel = Instance.new("TextLabel")
+xpLabel.Size = UDim2.new(0, 400, 0, 30)
+xpLabel.Position = UDim2.new(0.5, -200, 0, 230)
+xpLabel.Text = "XP: 0 | Level: 1"
+xpLabel.TextSize = 18
+xpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+xpLabel.BackgroundTransparency = 1
+xpLabel.Parent = mainFrame
+
+-- Fast Attack Toggle
+local fastAttackEnabled = false
+local autoFarmEnabled = false
+local xp = 0
+local level = 1
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Quest Related
+local currentQuest = nil  -- Tracks the current quest
+local npc = game.Workspace.NPCs -- Change this path to where NPCs are in your game
+
+-- Function to accept quests automatically
+local function acceptQuest()
+    for _, npc in pairs(npc:GetChildren()) do
+        if npc:FindFirstChild("QuestGiver") then  -- Ensure NPC has a quest giver script or tag
+            -- Interact with NPC to accept the quest
+            firetouchinterest(character.HumanoidRootPart, npc.QuestGiver.Part, 0)
+            firetouchinterest(character.HumanoidRootPart, npc.QuestGiver.Part, 1)
+            print("Quest Accepted: " .. npc.Name)
+            currentQuest = npc.Name  -- Track the current quest
+        end
+    end
 end
+
+-- Function to check and complete the quest (if objectives met)
+local function completeQuest()
+    if currentQuest then
+        -- Check if the quest objectives are completed, for example, killing certain enemies
+        if currentQuest == "EnemyKillQuest" then  -- Change this to the actual quest name
+            local killedEnemies = 0  -- Track how many enemies you have killed for this quest
+            -- Ensure the NPC has a quest completion trigger
+            if killedEnemies >= 10 then  -- Example condition
+                -- Complete the quest by interacting with the NPC again
+                firetouchinterest(character.HumanoidRootPart, npc.QuestGiver.Part, 0)
+                firetouchinterest(character.HumanoidRootPart, npc.QuestGiver.Part, 1)
+                print("Quest Completed: " .. currentQuest)
+                currentQuest = nil  -- Reset the quest
+            end
+        end
+    end
+end
+
+-- Find Nearest Enemy Function
+local function findNearestEnemy()
+    local nearestEnemy = nil
+    local shortestDistance = math.huge
+    for _, enemy in pairs(game.Workspace.Enemies:GetChildren()) do
+        if enemy:FindFirstChild("HumanoidRootPart") and enemy:FindFirstChild("Humanoid") then
+            local distance = (character.HumanoidRootPart.Position - enemy.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestEnemy = enemy
+            end
+        end
+    end
+    return nearestEnemy
+end
+
+-- Fast Attack Function
+local function fastAttack()
+    while fastAttackEnabled do
+        wait(0.1)  -- Faster attack speed
+        local target = findNearestEnemy()
+        if target then
+            character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame
+            game.ReplicatedStorage:WaitForChild("RemoteEvent"):FireServer("Attack", target)
+            xp = xp + 10  -- Gain XP for each attack (Example value)
+            if xp >= level * 100 then  -- Level Up Condition
+                level = level + 1
+                xp = 0
+            end
+            xpLabel.Text = "XP: " .. xp .. " | Level: " .. level
+        end
+        completeQuest()  -- Check if quest needs completion
+    end
+end
+
+-- Start Auto Farm Function
+local function startAutoFarmFunc()
+    autoFarmEnabled = true
+    while autoFarmEnabled do
+        wait(1)
+        local target = findNearestEnemy()
+        if target then
+            character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame
+            game.ReplicatedStorage:WaitForChild("RemoteEvent"):FireServer("Attack", target)
+            xp = xp + 10  -- Gain XP for each attack (Example value)
+            if xp >= level * 100 then
